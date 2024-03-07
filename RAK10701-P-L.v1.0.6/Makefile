@@ -1,4 +1,4 @@
-.PHONY:
+.PHONY: build
 
 init:
 	
@@ -19,8 +19,8 @@ init:
 	[ ! -d src ] && ln -s Src src
 
 build:
-	arduino-cli compile --fqbn rak_rui:nrf52:WisCoreRAK4631Board .
+	arduino-cli compile -e -b rak_rui:nrf52:WisCoreRAK4631Board .
 
 upload:
-	arduino-cli upload -p /dev/ttyACM0 --fqbn rak_rui:nrf52:WisCoreRAK4631Board .
+	arduino-cli upload -p /dev/ttyACM0 -b rak_rui:nrf52:WisCoreRAK4631Board .
 

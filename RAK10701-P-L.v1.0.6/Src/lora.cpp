@@ -84,25 +84,37 @@ void recvCallback(SERVICE_LORA_RECEIVE_T * data)
 	{
 		// LORA_LOG("%02X", data->Buffer[i]);
 	}
+	if ((data->Port != 2) && (data->Port != 12)) return;
+
+	int16_t min_rssi = data->Buffer[1] - 200;
+	int16_t max_rssi = data->Buffer[2] - 200;
+	int16_t min_distance;
+	int16_t max_distance;
+	uint16_t num_gateways;
 	if (data->Port == 2)
 	{
-		int16_t min_rssi = data->Buffer[1] - 200;
-		int16_t max_rssi = data->Buffer[2] - 200;
-		int16_t min_distance = data->Buffer[3] * 250;
-		int16_t max_distance = data->Buffer[4] * 250;
-		uint16_t num_gateways = data->Buffer[5];
-		
-		addHotspotsDate(&hotspotsDate , num_gateways);
-		addRssiDate(&rssiDate,max_rssi,min_rssi);
-		addDistanceDate(&distanceDate,max_distance,min_distance);
-		addSnrDate(&snrDate,data->Snr);
-		
-		loraRxDateStatus = REFRESHED;
-		
-		LORA_LOG("+EVT:FieldTester %d gateways", num_gateways);
-		LORA_LOG("+EVT:RSSI min %d max %d", min_rssi, max_rssi);
-		LORA_LOG("+EVT:Distance min %d max %d", min_distance, max_distance);
+		min_distance = data->Buffer[3] * 250;
+		max_distance = data->Buffer[4] * 250;
+		num_gateways = data->Buffer[5];
+	} 
+	else 
+	{
+		min_distance = 10 * (data->Buffer[3] * 256 + data->Buffer[4]);
+		max_distance = 10 * (data->Buffer[5] * 256 + data->Buffer[6]);
+		num_gateways = data->Buffer[7];
 	}
+	
+	addHotspotsDate(&hotspotsDate , num_gateways);
+	addRssiDate(&rssiDate,max_rssi,min_rssi);
+	addDistanceDate(&distanceDate,max_distance,min_distance);
+	addSnrDate(&snrDate,data->Snr);
+	
+	loraRxDateStatus = REFRESHED;
+	
+	LORA_LOG("+EVT:FieldTester %d gateways", num_gateways);
+	LORA_LOG("+EVT:RSSI min %d max %d", min_rssi, max_rssi);
+	LORA_LOG("+EVT:Distance min %d max %d", min_distance, max_distance);
+
 }
 
 void joinCallback(int32_t status)

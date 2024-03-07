@@ -3,7 +3,8 @@
 
 #include "common.h"
 
-#define SEND_PORT					1
+//#define SEND_PORT					1
+#define SEND_PORT					11 // HIGH RESOLUTION RESPONSE (10m steps gateway distance instead of 250m steps)
 #define CONFIRM_MESSAGE		1
 #define RETRY_TIMES				2
 
